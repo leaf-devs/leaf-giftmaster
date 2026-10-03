@@ -22,10 +22,6 @@ function separator({ divider = true, spacing = "small" } = {}) {
     );
 }
 
-/**
- * Build a Container from text blocks + optional accent color.
- * blocks: array of { type: "text" | "separator", content?, options? }
- */
 function container({ accentColor, blocks = [] }) {
   const c = new ContainerBuilder();
   if (accentColor !== undefined) c.setAccentColor(accentColor);
@@ -41,13 +37,13 @@ function container({ accentColor, blocks = [] }) {
 }
 
 /**
- * Wrap a reply payload for a V2 message.
+ * Build a reply payload for a V2 message.
+ * reply(c)                 → public
+ * reply(c, { ephemeral })  → ephemeral
  */
-function reply(container) {
-  return {
-    components: [container],
-    flags: V2_FLAG,
-  };
+function reply(c, { ephemeral = false } = {}) {
+  const flags = ephemeral ? V2_FLAG | MessageFlags.Ephemeral : V2_FLAG;
+  return { components: [c], flags };
 }
 
 module.exports = { container, text, separator, reply, V2_FLAG };

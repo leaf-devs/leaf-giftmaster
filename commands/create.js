@@ -1,14 +1,13 @@
 const {
   SlashCommandBuilder,
-  EmbedBuilder,
   PermissionFlagsBits,
-  MessageFlags,
 } = require("discord.js");
 const fs = require("fs").promises;
 const path = require("path");
 const config = require("../config.json");
 const { ensureDir } = require("../utils/stock.js");
 const { parseColor } = require("../utils/colors.js");
+const { container, reply } = require("../utils/v2.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -38,16 +37,19 @@ module.exports = {
     const type = interaction.options.getString("type");
 
     if (!service) {
-      return interaction.reply({
-        embeds: [
-          new EmbedBuilder()
-            .setColor(parseColor(config.color.red))
-            .setTitle("Invalid service name")
-            .setDescription("Only letters, numbers, dashes, underscores.")
-            .setTimestamp(),
-        ],
-        flags: MessageFlags.Ephemeral,
-      });
+      return interaction.reply(
+        reply(
+          container({
+            accentColor: parseColor(config.color.red),
+            blocks: [
+              {
+                type: "text",
+                content: `## Invalid service name\nOnly letters, numbers, dashes, underscores.`,
+              },
+            ],
+          })
+        )
+      );
     }
 
     const dir = path.join(__dirname, "..", type);
@@ -59,42 +61,49 @@ module.exports = {
       await fs.writeFile(filePath, "", { flag: "wx" });
     } catch (err) {
       if (err.code === "EEXIST") {
-        return interaction.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setColor(parseColor(config.color.yellow))
-              .setTitle("Already exists")
-              .setDescription(
-                `Service **${type}** \`${service}\` already exists.`
-              )
-              .setTimestamp(),
-          ],
-          flags: MessageFlags.Ephemeral,
-        });
+        return interaction.reply(
+          reply(
+            container({
+              accentColor: parseColor(config.color.yellow),
+              blocks: [
+                {
+                  type: "text",
+                  content: `## Already exists\nService **${type}** \`${service}\` already exists.`,
+                },
+              ],
+            })
+          )
+        );
       }
       console.error(err);
-      return interaction.reply({
-        content: "Failed to create service.",
-        flags: MessageFlags.Ephemeral,
-      });
+      return interaction.reply(
+        reply(
+          container({
+            accentColor: parseColor(config.color.red),
+            blocks: [
+              {
+                type: "text",
+                content: `## Error\nFailed to create service.`,
+              },
+            ],
+          })
+        )
+      );
     }
 
-    await interaction.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setColor(parseColor(config.color.green))
-          .setTitle("Service created!")
-          .setDescription(`New **${type}** service \`${service}\` created.`)
-          .setFooter({
-            text: interaction.user.tag,
-            iconURL: interaction.user.displayAvatarURL({
-              dynamic: true,
-              size: 64,
-            }),
-          })
-          .setTimestamp(),
-      ],
-      flags: MessageFlags.Ephemeral,
-    });
+    await interaction.reply(
+      reply(
+        container({
+          accentColor: parseColor(config.color.green),
+          blocks: [
+            { type: "text", content: `# Service created` },
+            { type: "separator" },
+            { type: "text", content: `**Type**\n\`${type}\`` },
+            { type: "separator" },
+            { type: "text", content: `**Service**\n\`${service}\`` },
+          ],
+        })
+      )
+    );
   },
 };

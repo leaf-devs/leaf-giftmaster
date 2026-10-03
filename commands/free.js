@@ -1,14 +1,11 @@
-const {
-  SlashCommandBuilder,
-  EmbedBuilder,
-  MessageFlags,
-} = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 const fs = require("fs").promises;
 const path = require("path");
 const config = require("../config.json");
 const { withLock } = require("../utils/fileLock.js");
 const { hit } = require("../utils/cooldown.js");
 const { parseColor } = require("../utils/colors.js");
+const { container, reply, V2_FLAG } = require("../utils/v2.js");
 
 const SERVICES_DIR = path.join(__dirname, "..", "free");
 
@@ -51,97 +48,110 @@ module.exports = {
       .replace(/[^a-z0-9_-]/g, "");
 
     if (interaction.channelId !== config.genChannel) {
-      return interaction.reply({
-        embeds: [
-          new EmbedBuilder()
-            .setColor(parseColor(config.color.red))
-            .setTitle("Wrong channel")
-            .setDescription(`Use <#${config.genChannel}> for free generations.`)
-            .setTimestamp(),
-        ],
-        flags: MessageFlags.Ephemeral,
-      });
+      return interaction.reply(
+        reply(
+          container({
+            accentColor: parseColor(config.color.red),
+            blocks: [
+              { type: "text", content: `## Wrong channel\nUse <#${config.genChannel}> for free generations.` },
+            ],
+          }),
+          { ephemeral: true }
+        )
+      );
     }
 
     const remaining = hit(`free:${interaction.user.id}`, config.genCooldown);
     if (remaining > 0) {
-      return interaction.reply({
-        embeds: [
-          new EmbedBuilder()
-            .setColor(parseColor(config.color.red))
-            .setTitle("Cooldown")
-            .setDescription(`Wait **${remaining}s** before generating again.`)
-            .setTimestamp(),
-        ],
-        flags: MessageFlags.Ephemeral,
-      });
+      return interaction.reply(
+        reply(
+          container({
+            accentColor: parseColor(config.color.red),
+            blocks: [
+              { type: "text", content: `## Cooldown\nWait **${remaining}s** before generating again.` },
+            ],
+          }),
+          { ephemeral: true }
+        )
+      );
     }
 
     const filePath = path.join(SERVICES_DIR, `${service}.txt`);
     const result = await popAccount(filePath);
 
     if (result.error === "not_found") {
-      return interaction.reply({
-        embeds: [
-          new EmbedBuilder()
-            .setColor(parseColor(config.color.red))
-            .setTitle("Generator error")
-            .setDescription(`Service \`${service}\` does not exist.`)
-            .setTimestamp(),
-        ],
-        flags: MessageFlags.Ephemeral,
-      });
+      return interaction.reply(
+        reply(
+          container({
+            accentColor: parseColor(config.color.red),
+            blocks: [
+              { type: "text", content: `## Generator error\nService \`${service}\` does not exist.` },
+            ],
+          }),
+          { ephemeral: true }
+        )
+      );
     }
 
     if (result.error === "empty") {
-      return interaction.reply({
-        embeds: [
-          new EmbedBuilder()
-            .setColor(parseColor(config.color.red))
-            .setTitle("Out of stock")
-            .setDescription(`\`${service}\` has no accounts left.`)
-            .setTimestamp(),
-        ],
-        flags: MessageFlags.Ephemeral,
-      });
+      return interaction.reply(
+        reply(
+          container({
+            accentColor: parseColor(config.color.red),
+            blocks: [
+              { type: "text", content: `## Out of stock\n\`${service}\` has no accounts left.` },
+            ],
+          }),
+          { ephemeral: true }
+        )
+      );
     }
 
-    const embed = new EmbedBuilder()
-      .setColor(parseColor(config.color.green))
-      .setTitle("Generated Free Account")
-      .addFields(
-        {
-          name: "Service",
-          value: `\`\`\`${service[0].toUpperCase()}${service.slice(1)}\`\`\``,
-          inline: true,
-        },
-        {
-          name: "Account",
-          value: `\`\`\`${result.account}\`\`\``,
-          inline: true,
-        }
-      )
-      .setImage(config.banner)
-      .setTimestamp();
+    const success = container({
+      accentColor: parseColor(config.color.green),
+      blocks: [
+        { type: "text", content: `# Generated Free Account` },
+        { type: "separator" },
+        { type: "text", content: `**Service**\n\`\`\`${service[0].toUpperCase()}${service.slice(1)}\`\`\`` },
+        { type: "separator" },
+        { type: "text", content: `**Account**\n\`\`\`${result.account}\`\`\`` },
+      ],
+    });
 
     let dmOk = true;
     try {
-      await interaction.user.send({ embeds: [embed] });
+      await interaction.user.send({ components: [success], flags: V2_FLAG });
     } catch {
       dmOk = false;
     }
 
     if (dmOk) {
-      await interaction.reply({
-        content: `Check your DMs, ${interaction.user}. If you didn't get it, open your privacy settings.`,
-      });
+      await interaction.reply(
+        reply(
+          container({
+            accentColor: parseColor(config.color.green),
+            blocks: [
+              { type: "text", content: `## Sent\nCheck your DMs, ${interaction.user}.` },
+            ],
+          })
+        )
+      );
     } else {
-      await interaction.reply({
-        content:
-          "Couldn't DM you — sending here instead. Open your DMs for next time.",
-        embeds: [embed],
-        flags: MessageFlags.Ephemeral,
-      });
+      await interaction.reply(
+        reply(
+          container({
+            accentColor: parseColor(config.color.yellow),
+            blocks: [
+              { type: "text", content: `## Couldn't DM you\nSending here instead — open your DMs for next time.` },
+              { type: "separator" },
+              { type: "text", content: `**Service**\n\`\`\`${service[0].toUpperCase()}${service.slice(1)}\`\`\`` },
+              { type: "separator" },
+              { type: "text", content: `**Account**\n\`\`\`${result.account}\`\`\`` },
+            ],
+          }),
+          { ephemeral: true }
+        )
+      );
     }
   },
 };

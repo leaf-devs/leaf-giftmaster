@@ -1,8 +1,6 @@
 const {
   SlashCommandBuilder,
-  EmbedBuilder,
   PermissionFlagsBits,
-  MessageFlags,
 } = require("discord.js");
 const fs = require("fs").promises;
 const path = require("path");
@@ -10,6 +8,7 @@ const config = require("../config.json");
 const { ensureDir, countLines } = require("../utils/stock.js");
 const { withLock } = require("../utils/fileLock.js");
 const { parseColor } = require("../utils/colors.js");
+const { container, reply } = require("../utils/v2.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -49,10 +48,19 @@ module.exports = {
       .trim();
 
     if (!account) {
-      return interaction.reply({
-        content: "Account line is empty.",
-        flags: MessageFlags.Ephemeral,
-      });
+      return interaction.reply(
+        reply(
+          container({
+            accentColor: parseColor(config.color.red),
+            blocks: [
+              {
+                type: "text",
+                content: `## Invalid input\nAccount line is empty.`,
+              },
+            ],
+          })
+        )
+      );
     }
 
     const dir = path.join(__dirname, "..", type);
@@ -76,32 +84,38 @@ module.exports = {
       });
     } catch (err) {
       console.error(err);
-      return interaction.reply({
-        content: "Failed to add account.",
-        flags: MessageFlags.Ephemeral,
-      });
+      return interaction.reply(
+        reply(
+          container({
+            accentColor: parseColor(config.color.red),
+            blocks: [
+              {
+                type: "text",
+                content: `## Error\nFailed to add account.`,
+              },
+            ],
+          })
+        )
+      );
     }
 
     const total = await countLines(filePath);
 
-    await interaction.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setColor(parseColor(config.color.green))
-          .setTitle("Account added!")
-          .setDescription(
-            `Added to **${type}** \`${service}\` — stock now **${total}**.`
-          )
-          .setFooter({
-            text: interaction.user.tag,
-            iconURL: interaction.user.displayAvatarURL({
-              dynamic: true,
-              size: 64,
-            }),
-          })
-          .setTimestamp(),
-      ],
-      flags: MessageFlags.Ephemeral,
-    });
+    await interaction.reply(
+      reply(
+        container({
+          accentColor: parseColor(config.color.green),
+          blocks: [
+            { type: "text", content: `# Account added` },
+            { type: "separator" },
+            { type: "text", content: `**Type**\n\`${type}\`` },
+            { type: "separator" },
+            { type: "text", content: `**Service**\n\`${service}\`` },
+            { type: "separator" },
+            { type: "text", content: `**Stock now**\n\`${total}\`` },
+          ],
+        })
+      )
+    );
   },
 };
