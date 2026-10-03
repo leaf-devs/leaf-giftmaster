@@ -12,6 +12,8 @@ module.exports = {
     .setDMPermission(false),
 
   async execute(interaction) {
+    const p = config.prefix || "!";
+
     const embed = new EmbedBuilder()
       .setColor(parseColor(config.color.default))
       .setTitle("Help Panel")
@@ -25,12 +27,13 @@ module.exports = {
       .addFields({
         name: "Commands",
         value: [
-          "`/help` — Displays the help command",
-          "`/create` — Create a new service",
-          "`/add` — Add a reward to the stock",
-          "`/stock` — View the current stock",
-          "`/free` — Generate a free reward",
-          "`/premium` — Generate a premium reward",
+          `**Slash**                     **Prefix**`,
+          `\`/help\` — help panel           \`${p}help\``,
+          `\`/stock\` — live stock            \`${p}stock\``,
+          `\`/free <service>\` — free gen     \`${p}free <service>\``,
+          `\`/premium <service>\` — prem gen  \`${p}premium <service>\``,
+          `\`/create <service> <type>\`      \`${p}create <service> <type>\``,
+          `\`/add <type> <service> <acct>\`  \`${p}add <type> <service> <acct>\``,
         ].join("\n"),
       })
       .addFields({
