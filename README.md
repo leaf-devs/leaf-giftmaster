@@ -122,45 +122,76 @@ npm run dev
 
 ```
 giftmaster/
-├── index.js                bot entry
-├── server.js               dashboard entry
-├── deploy-commands.js      slash command registration
-├── config.json             bot + dashboard config
-├── .env                    secrets (gitignored)
-├── .env.example            template
+├── index.js                    # Discord bot entry point
+├── server.js                   # Dashboard/Express entry point
+├── deploy-commands.js          # Slash-command registration
+│
+├── config.json                 # Bot + dashboard configuration
 ├── package.json
-├── commands/               slash commands
+├── package-lock.json
+├── .env                        # Secrets (gitignored)
+├── .env.example                # Environment template
+├── .gitignore
+├── README.md
+│
+├── commands/
 │   ├── add.js
 │   ├── create.js
 │   ├── free.js
 │   ├── help.js
 │   ├── premium.js
 │   └── stock.js
+│
 ├── utils/
-│   ├── colors.js           hex → int color coercion
-│   ├── cooldown.js         in-memory per-user cooldowns
-│   ├── fileLock.js         per-file mutex for stock writes
-│   └── stock.js            stock dir helpers
-├── dashboard/              served by express.static
+│   ├── colors.js               # Hex → integer color conversion
+│   ├── cooldown.js             # Per-user cooldown handling
+│   ├── fileLock.js             # Per-file stock write mutex
+│   └── stock.js                # Stock file helpers
+│
+├── dashboard/
 │   ├── login.html
 │   ├── accessdecline.html
 │   ├── invalidlogin.html
+│   │
 │   ├── css/
 │   │   ├── login.css
 │   │   ├── accessdecline.css
 │   │   └── manager.css
+│   │
 │   ├── js/
 │   │   └── main.js
+│   │
 │   └── img/
 │       ├── wave.png
 │       ├── bg.svg
 │       ├── gift.png
 │       └── pattern.png
-├── free/                   free stock (one account per line)
-│   └── <service>.txt
-├── premium/                premium stock
-│   └── <service>.txt
-└── .sessions/              session file store (gitignored)
+│
+├── routes/
+│   ├── auth.js                 # Login/logout
+│   ├── dashboard.js            # Dashboard routes
+│   ├── settings.js             # Settings routes
+│   └── files.js                # Create/edit/rename/delete
+│
+├── middleware/
+│   ├── auth.js                 # Authentication middleware
+│   └── rateLimit.js            # Login/API rate limits
+│
+├── views/
+│   ├── dashboard.js            # Dashboard HTML
+│   ├── help.js                 # Help page HTML
+│   ├── settings.js             # Settings page HTML
+│   ├── editor.js               # Stock editor HTML
+│   └── saved.js                # Save-success page
+│
+├── free/
+│   └── <service>.txt           # Free stock
+│
+├── premium/
+│   └── <service>.txt           # Premium stock
+│
+└── .sessions/
+    └── ...                      # Session files (gitignored)
 ```
 
 ---
