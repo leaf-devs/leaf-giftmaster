@@ -1,52 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Giftmaster Login</title>
-    <link rel="icon" href="https://cdn.discordapp.com/attachments/1152538414017687684/1154710899525947422/gift.jpg" type="image/jpg">
-    <link rel="stylesheet" type="text/css" href="css/login.css">
-	<link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
-	<script src="https://kit.fontawesome.com/a81368914c.js"></script>
+	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Giftmaster Login</title>
+	<link rel="icon" href="https://cdn.discordapp.com/attachments/1152538414017687684/1154710899525947422/gift.jpg" type="image/jpg">
+	<link rel="stylesheet" type="text/css" href="css/login.css">
+	<link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/a81368914c.js" crossorigin="anonymous"></script>
 </head>
 <body>
-	<img class="wave" src="img/wave.png">
+	<img class="wave" src="img/wave.png" alt="">
 	<div class="container">
 		<div class="img">
-			<img src="img/bg.svg">
+			<img src="img/bg.svg" alt="">
 		</div>
 		<div class="login-content">
 			<form action="/login" method="POST">
-				<img src="img/gift.png">
+				<img src="img/gift.png" alt="">
 				<h2 class="title">Welcome</h2>
-                
-           		<div class="input-div one">
-           		   <div class="i">
-           		   		<i class="fas fa-user"></i>
-           		   </div>
-           		   <div class="div">
-           		   		<h5>Username</h5>
-           		   		<input type="text" class="input" name="username" placeholder="Username" required>
-           		   </div>
-           		</div>
-           		<div class="input-div pass">
-           		   <div class="i"> 
-           		    	<i class="fas fa-lock"></i>
-           		   </div>
-           		   <div class="div">
-           		    	<h5>Password</h5>
-           		    	<input type="password" class="input" name="password" placeholder="Password" required>
-            	   </div>
-            	</div>
-            	<input type="submit" class="btn" value="Login">
-            </form>
-        </div>
-    </div>
+
+				<div class="input-div one">
+					<div class="i">
+						<i class="fas fa-user"></i>
+					</div>
+					<div class="div">
+						<h5>Username</h5>
+						<input type="text" class="input" name="username" placeholder="Username" autocomplete="username" required>
+					</div>
+				</div>
+
+				<div class="input-div pass">
+					<div class="i">
+						<i class="fas fa-lock"></i>
+					</div>
+					<div class="div">
+						<h5>Password</h5>
+						<input type="password" class="input" name="password" placeholder="Password" autocomplete="current-password" required>
+					</div>
+				</div>
+
+				<input type="submit" class="btn" value="Login">
+			</form>
+		</div>
+	</div>
 
 	<div class="floating-heart">
 		<i class="fas fa-heart"></i>
 		<div class="tooltip">Made with ❤️ By Science Gear</div>
-	  </div>
-	  
-    <script type="text/javascript" src="js/main.js"></script>
+	</div>
+
+	<script type="text/javascript" src="js/main.js"></script>
 </body>
 </html>

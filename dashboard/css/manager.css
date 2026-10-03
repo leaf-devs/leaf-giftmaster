@@ -15,6 +15,8 @@
 	--gray: #f5f5f5;
 	--black1: #222;
 	--black2: #999;
+	--red: #e74c3c;
+	--green: #2ecc71;
 }
 
 body {
@@ -272,19 +274,16 @@ body {
 	display: flex;
 	grid-template-columns: 2fr 1fr;
 	grid-gap: 30px;
-	/* margin-top: 10px; */
 }
 
 .details .recentOrders {
 	position: relative;
 	flex: 1;
-	/* Allow this element to grow and fill remaining space */
 	background: var(--white);
 	padding: 20px;
 	box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
 	border-radius: 20px;
 	overflow: auto;
-	/* Add scrollbars when content overflows */
 }
 
 .details .cardHeader {
@@ -509,13 +508,11 @@ body {
 	}
 }
 
-/* Button Styles */
+/* ====================== Buttons ====================== */
 .button-container {
 	position: absolute;
 	top: 20px;
-	/* Adjust the top position as needed */
 	right: 20px;
-	/* Adjust the right position as needed */
 	text-align: center;
 }
 
@@ -532,61 +529,9 @@ body {
 
 .button:hover {
 	background-color: #1e177d;
-	/* Darker shade of blue on hover */
 }
 
-/* Popup Styles */
-.popup-container {
-	display: none;
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	width: 300px;
-	/* Adjust the width as needed */
-	background: var(--white);
-	padding: 20px;
-	border-radius: 10px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	z-index: 9999;
-	/* Ensure the popup is above other content */
-}
-
-.popup-container h2 {
-	font-size: 1.5rem;
-	margin-bottom: 10px;
-}
-
-.popup-container .close-button {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	cursor: pointer;
-	font-size: 1.2rem;
-}
-
-.popup-container .close-button:hover {
-	color: var(--blue);
-	/* Change the color on hover */
-}
-
-/* Section Title Styles */
-.section-title {
-	font-size: 1.5rem;
-	color: var(--blue);
-	margin-bottom: 10px;
-}
-
-/* File List Styles */
-.files-section {
-	margin-top: 20px;
-	background: var(--gray);
-	padding: 20px;
-	border-radius: 10px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Updated Popup Styles */
+/* ====================== Popups ====================== */
 .popup-container {
 	display: none;
 	position: fixed;
@@ -608,7 +553,35 @@ body {
 	color: var(--blue);
 }
 
-/* File Select Dropdown Styles */
+.popup-container .close-button {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	cursor: pointer;
+	font-size: 1.2rem;
+}
+
+.popup-container .close-button:hover {
+	color: var(--blue);
+}
+
+/* ====================== Section Title ====================== */
+.section-title {
+	font-size: 1.5rem;
+	color: var(--blue);
+	margin-bottom: 10px;
+}
+
+/* ====================== Files Section ====================== */
+.files-section {
+	margin-top: 20px;
+	background: var(--gray);
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ====================== File Select ====================== */
 .file-select {
 	margin-bottom: 15px;
 }
@@ -628,7 +601,7 @@ body {
 	border-color: var(--blue);
 }
 
-/* Input Field Styles */
+/* ====================== Inputs ====================== */
 .fancy-input {
 	position: relative;
 	margin-bottom: 15px;
@@ -649,7 +622,7 @@ body {
 	border-color: var(--blue);
 }
 
-/* Create Button Styles */
+/* ====================== Fancy Button ====================== */
 .fancy-button {
 	background-color: var(--blue);
 	color: var(--white);
@@ -665,7 +638,7 @@ body {
 	background-color: #1e177d;
 }
 
-/* Updated File List Styles */
+/* ====================== File List ====================== */
 .file-list {
 	list-style: none;
 	padding: 0;
@@ -692,34 +665,16 @@ body {
 
 .file-list li:hover {
 	background-color: #f0f0f0;
-	/* Change background color on hover */
 }
 
 .file-list a:hover {
 	color: var(--black1);
-	/* Change text color on hover */
 }
 
-/* Delete Button Styles */
-.delete-button {
-	color: var(--red);
-	/* Customize the delete button color */
-	cursor: pointer;
-	font-size: 1.2rem;
-	transition: color 0.3s ease-in-out;
-}
-
-.delete-button:hover {
-	color: #ff0000;
-	/* Change the color on hover */
-}
-
-/* Style individual file items */
-/* Style individual file items */
+/* ====================== File Item ====================== */
 .file-item {
 	display: flex;
 	justify-content: space-between;
-	/* Move buttons to the right */
 	align-items: center;
 	padding: 10px;
 	background-color: var(--white);
@@ -727,14 +682,12 @@ body {
 	margin-bottom: 10px;
 	transition: background-color 0.3s ease-in-out;
 	border: 2px solid transparent;
-	/* Initially, set a transparent border */
 }
 
 .file-item .file-icon {
 	margin-right: 10px;
 	font-size: 24px;
 	color: var(--blue);
-	/* Icon color */
 }
 
 .file-item .file-name {
@@ -745,55 +698,47 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-	/* Align items to the left */
 	flex-grow: 1;
-	/* Allow the file name to take up available space */
 }
 
-/* Add different border colors on hover for each file item */
 .file-item:nth-child(odd):hover {
 	background-color: #f0f0f0;
-	/* Change background color on hover for odd items */
 	border-color: var(--blue);
-	/* Border color on hover for odd items */
 }
 
 .file-item:nth-child(even):hover {
 	background-color: #f0f0f0;
-	/* Change background color on hover for even items */
 	border-color: var(--red);
-	/* Border color on hover for even items */
 }
 
-/* Style the Rename button */
+/* ====================== File Actions ====================== */
+.file-actions {
+	display: flex;
+	gap: 6px;
+	flex-shrink: 0;
+}
+
+/* ====================== Rename Button ====================== */
 .rename-button {
 	background-color: var(--green);
-	/* Change to your desired color */
-	color: var(--black1);
-	/* Set an initial text color */
+	color: var(--white);
 	border: none;
 	border-radius: 5px;
 	padding: 5px 10px;
 	cursor: pointer;
 	font-size: 1rem;
-	margin-right: 5px;
-	/* Add margin to separate buttons */
 	transition: background-color 0.3s ease-in-out;
 }
 
 .rename-button:hover {
-	background-color: #1e177d;
-	/* Darker shade of green on hover */
+	background-color: #27ae60;
 	color: var(--white);
-	/* Change text color on hover */
 }
 
-/* Style the Delete button */
+/* ====================== Delete Button ====================== */
 .delete-button {
 	background-color: var(--red);
-	/* Change to red color */
-	color: var(--black1);
-	/* Set an initial text color */
+	color: var(--white);
 	border: none;
 	border-radius: 5px;
 	padding: 5px 10px;
@@ -803,18 +748,15 @@ body {
 }
 
 .delete-button:hover {
-	background-color: #ff0000;
-	/* Darker shade of red on hover */
+	background-color: #c0392b;
 	color: var(--white);
-	/* Change text color on hover */
 }
 
-
-/* Modal styles */
+/* ====================== Modal ====================== */
 .modal {
 	display: none;
 	position: fixed;
-	z-index: 1;
+	z-index: 10000;
 	left: 0;
 	top: 0;
 	width: 100%;
@@ -832,7 +774,11 @@ body {
 	border-radius: 5px;
 }
 
-/* Close button styles */
+.modal-content h2 {
+	font-size: 18px;
+	margin-bottom: 10px;
+}
+
 .close {
 	float: right;
 	cursor: pointer;
@@ -843,13 +789,6 @@ body {
 	color: #f00;
 }
 
-/* Rename popup header styles */
-h2 {
-	font-size: 18px;
-	margin-bottom: 10px;
-}
-
-/* Input field styles */
 #newFileName {
 	width: 100%;
 	padding: 10px;
@@ -859,7 +798,6 @@ h2 {
 	font-size: 16px;
 }
 
-/* Rename button styles */
 #renameButton {
 	background-color: #007bff;
 	color: #fff;
@@ -872,4 +810,49 @@ h2 {
 
 #renameButton:hover {
 	background-color: #0056b3;
+}
+
+/* ====================== Floating Heart ====================== */
+.floating-heart {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	background-color: #ff5555;
+	color: #fff;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+	z-index: 9998;
+}
+
+.floating-heart i {
+	font-size: 24px;
+}
+
+.floating-heart:hover {
+	background-color: #ff3333;
+}
+
+.tooltip {
+	position: absolute;
+	background-color: #333;
+	color: #fff;
+	padding: 5px 10px;
+	border-radius: 5px;
+	bottom: 60px;
+	right: 0;
+	white-space: nowrap;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+	font-size: 0.85rem;
+}
+
+.floating-heart:hover .tooltip {
+	opacity: 1;
 }

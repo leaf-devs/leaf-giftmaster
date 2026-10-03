@@ -1,15 +1,15 @@
-*{
+* {
 	padding: 0;
 	margin: 0;
 	box-sizing: border-box;
 }
 
-body{
-    font-family: 'Poppins', sans-serif;
-    overflow: hidden;
+body {
+	font-family: 'Poppins', sans-serif;
+	overflow: hidden;
 }
 
-.wave{
+.wave {
 	position: fixed;
 	bottom: 0;
 	left: 0;
@@ -17,87 +17,89 @@ body{
 	z-index: -1;
 }
 
-.container{
-    width: 100vw;
-    height: 100vh;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap :7rem;
-    padding: 0 2rem;
+.container {
+	width: 100vw;
+	height: 100vh;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-gap: 7rem;
+	padding: 0 2rem;
 }
 
-.img{
+.img {
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
 }
 
-.login-content{
+.login-content {
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
 	text-align: center;
 }
 
-.img img{
+.img img {
 	width: 500px;
 }
 
-form{
+form {
 	width: 360px;
 }
 
-.login-content img{
-    height: 100px;
+.login-content img {
+	height: 100px;
 }
 
-.login-content h2{
+.login-content h2 {
 	margin: 15px 0;
 	color: #333;
 	text-transform: uppercase;
 	font-size: 2.9rem;
 }
 
-.login-content .input-div{
+.login-content .input-div {
 	position: relative;
-    display: grid;
-    grid-template-columns: 7% 93%;
-    margin: 25px 0;
-    padding: 5px 0;
-    border-bottom: 2px solid #d9d9d9;
+	display: grid;
+	grid-template-columns: 7% 93%;
+	margin: 25px 0;
+	padding: 5px 0;
+	border-bottom: 2px solid #d9d9d9;
 }
 
-.login-content .input-div.one{
+.login-content .input-div.one {
 	margin-top: 0;
 }
 
-.i{
+.i {
 	color: #d9d9d9;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
-.i i{
+.i i {
 	transition: .3s;
 }
 
-.input-div > div{
-    position: relative;
+.input-div > div {
+	position: relative;
 	height: 45px;
 }
 
-.input-div > div > h5{
+.input-div > div > h5 {
 	position: absolute;
 	left: 10px;
 	top: 50%;
 	transform: translateY(-50%);
-	color: #ffffff;
+	color: #999;
 	font-size: 18px;
 	transition: .3s;
+	pointer-events: none;
 }
 
-.input-div:before, .input-div:after{
+.input-div:before,
+.input-div:after {
 	content: '';
 	position: absolute;
 	bottom: -2px;
@@ -107,29 +109,30 @@ form{
 	transition: .4s;
 }
 
-.input-div:before{
+.input-div:before {
 	right: 50%;
 }
 
-.input-div:after{
+.input-div:after {
 	left: 50%;
 }
 
-.input-div.focus:before, .input-div.focus:after{
+.input-div.focus:before,
+.input-div.focus:after {
 	width: 50%;
 }
 
-.input-div.focus > div > h5{
+.input-div.focus > div > h5 {
 	top: -5px;
-    color: #999;
+	color: #999;
 	font-size: 15px;
 }
 
-.input-div.focus > .i > i{
+.input-div.focus > .i > i {
 	color: #38d39f;
 }
 
-.input-div > div > input{
+.input-div > div > input {
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -141,14 +144,14 @@ form{
 	padding: 0.5rem 0.7rem;
 	font-size: 1.2rem;
 	color: #555;
-	font-family: 'poppins', sans-serif;
+	font-family: 'Poppins', sans-serif;
 }
 
-.input-div.pass{
+.input-div.pass {
 	margin-bottom: 4px;
 }
 
-a{
+a {
 	display: block;
 	text-align: right;
 	text-decoration: none;
@@ -157,11 +160,11 @@ a{
 	transition: .3s;
 }
 
-a:hover{
+a:hover {
 	color: #38d39f;
 }
 
-.btn{
+.btn {
 	display: block;
 	width: 100%;
 	height: 50px;
@@ -178,93 +181,87 @@ a:hover{
 	cursor: pointer;
 	transition: .5s;
 }
-.btn:hover{
+
+.btn:hover {
 	background-position: right;
 }
 
-
-@media screen and (max-width: 1050px){
-	.container{
+@media screen and (max-width: 1050px) {
+	.container {
 		grid-gap: 5rem;
 	}
 }
 
-@media screen and (max-width: 1000px){
-	form{
+@media screen and (max-width: 1000px) {
+	form {
 		width: 290px;
 	}
 
-	.login-content h2{
-        font-size: 2.4rem;
-        margin: 8px 0;
+	.login-content h2 {
+		font-size: 2.4rem;
+		margin: 8px 0;
 	}
 
-	.img img{
+	.img img {
 		width: 400px;
 	}
 }
 
-@media screen and (max-width: 900px){
-	.container{
+@media screen and (max-width: 900px) {
+	.container {
 		grid-template-columns: 1fr;
 	}
 
-	.img{
+	.img {
 		display: none;
 	}
 
-	.wave{
+	.wave {
 		display: none;
 	}
 
-	.login-content{
+	.login-content {
 		justify-content: center;
 	}
 }
 
-/* Add the heart icon and tooltip styles */
+/* ============ Floating heart ============ */
 .floating-heart {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #ff5555;
-  color: #fff;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	background-color: #ff5555;
+	color: #fff;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+	z-index: 10;
 }
 
 .floating-heart i {
-  font-size: 24px;
+	font-size: 24px;
 }
 
 .tooltip {
-  position: absolute;
-  background-color: #333;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 5px;
-  bottom: 50px;
-  right: 50px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.inline-text {
-  display: inline-block; /* Make the text inline */
-  margin-left: 5px; /* Add some spacing between "Made by" and "Science Gear" */
-}
-
-.floating-heart:hover {
-  background-color: #ff3333;
+	position: absolute;
+	background-color: #333;
+	color: #fff;
+	padding: 5px 10px;
+	border-radius: 5px;
+	bottom: 60px;
+	right: 0;
+	white-space: nowrap;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+	font-size: 0.85rem;
 }
 
 .floating-heart:hover .tooltip {
-  opacity: 1;
+	opacity: 1;
 }

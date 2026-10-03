@@ -1,49 +1,91 @@
-const Discord = require("discord.js");
-const { Client, Intents, Permissions, Collection } = require("discord.js");
-const { Routes } = require("discord-api-types/v9");
-const { clientId, guildId, token } = require("./config.json");
-const config = require('./config.json');
+require("dotenv").config();
+const path = require("path");
 const fs = require("fs");
-const generated = new Set();
-const server = require('./server.js');
-const commands = require('./deploy-commands.js')
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const {
+  Client,
+  Collection,
+  GatewayIntentBits,
+  ActivityType,
+  MessageFlags,
+} = require("discord.js");
 
-client.commands = new Collection();
-const commandFiles = fs
-  .readdirSync("./commands")
-  .filter((file) => file.endsWith(".js"));
+const config = require("./config.json");
+const { ensureDir } = require("./utils/stock.js");
 
-for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
-  client.commands.set(command.data.name, command);
+// Boot the dashboard. server.js listens on its own port.
+require("./server.js");
+
+const token = process.env.TOKEN;
+if (!token) {
+  console.error("Missing TOKEN in environment (.env).");
+  process.exit(1);
 }
 
-client.once('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-  client.user.setActivity(`${config.status}`, { type: "WATCHING" }); // Set the bot's activity status
-    /* You can change the activity type to:
-     * LISTENING
-     * WATCHING
-     * COMPETING
-     * STREAMING (you need to add a twitch.tv url next to type like this:   { type: "STREAMING", url: "https://twitch.tv/twitch_username_here"} )
-     * PLAYING (default)
-    */
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds],
+});
+
+client.commands = new Collection();
+
+const commandsDir = path.join(__dirname, "commands");
+for (const file of fs.readdirSync(commandsDir).filter((f) => f.endsWith(".js"))) {
+  const command = require(path.join(commandsDir, file));
+  if (command?.data && typeof command.execute === "function") {
+    client.commands.set(command.data.name, command);
+  }
+}
+
+client.once("clientReady", async () => {
+  console.log(`Logged in as ${client.user.tag}`);
+
+  client.user.setActivity(config.status, { type: ActivityType.Watching });
+
+  await ensureDir(path.join(__dirname, "free"));
+  await ensureDir(path.join(__dirname, "premium"));
 });
 
 client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isCommand()) return;
+  if (!interaction.isChatInputCommand()) return;
 
   const command = client.commands.get(interaction.commandName);
-
-  if (!command) return;
+  if (!command) {
+    if (config.command.notfound_message && interaction.isRepliable()) {
+      await interaction
+        .reply({
+          content: "Unknown command.",
+          flags: MessageFlags.Ephemeral,
+        })
+        .catch(() => {});
+    }
+    return;
+  }
 
   try {
-    await command.execute(interaction);
-  } catch (error) {
-    console.error(error);
+    await command.execute(interaction, client);
+  } catch (err) {
+    console.error(`Error in /${interaction.commandName}:`, err);
+
+    if (!interaction.isRepliable()) return;
+    const payload = config.command.error_message
+      ? {
+          content: "Something went wrong running that command.",
+          flags: MessageFlags.Ephemeral,
+        }
+      : { content: "Error.", flags: MessageFlags.Ephemeral };
+
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp(payload).catch(() => {});
+    } else {
+      await interaction.reply(payload).catch(() => {});
+    }
   }
 });
 
-client.login(process.env.token || token);
+process.on("unhandledRejection", (err) => {
+  console.error("Unhandled rejection:", err);
+});
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught exception:", err);
+});
 
+client.login(token);

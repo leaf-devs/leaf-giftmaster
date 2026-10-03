@@ -1,36 +1,41 @@
+// ------------------------------------------------------------------
+// Login form — floating label animation
+// ------------------------------------------------------------------
+
 const inputs = document.querySelectorAll(".input");
 
-
-function addcl(){
-	let parent = this.parentNode.parentNode;
-	parent.classList.add("focus");
+function addFocus() {
+  const parent = this.parentNode.parentNode;
+  parent.classList.add("focus");
 }
 
-function remcl(){
-	let parent = this.parentNode.parentNode;
-	if(this.value == ""){
-		parent.classList.remove("focus");
-	}
+function removeFocus() {
+  const parent = this.parentNode.parentNode;
+  if (this.value === "") {
+    parent.classList.remove("focus");
+  }
 }
 
-
-inputs.forEach(input => {
-	input.addEventListener("focus", addcl);
-	input.addEventListener("blur", remcl);
+inputs.forEach((input) => {
+  input.addEventListener("focus", addFocus);
+  input.addEventListener("blur", removeFocus);
 });
 
+// ------------------------------------------------------------------
+// Floating heart tooltip
+// ------------------------------------------------------------------
 
+const floatingHeart = document.querySelector(".floating-heart");
 
-// JavaScript for toggling the tooltip
-const floatingHeart = document.querySelector('.floating-heart');
+if (floatingHeart) {
+  const tooltip = floatingHeart.querySelector(".tooltip");
 
-floatingHeart.addEventListener('click', () => {
-  const tooltip = floatingHeart.querySelector('.tooltip');
-  tooltip.style.display = tooltip.style.display === 'block' ? 'none' : 'block';
-});
+  if (tooltip) {
+    tooltip.style.display = "none";
 
-// Hide the tooltip initially
-document.addEventListener('DOMContentLoaded', () => {
-  const tooltip = floatingHeart.querySelector('.tooltip');
-  tooltip.style.display = 'none';
-});
+    floatingHeart.addEventListener("click", () => {
+      tooltip.style.display =
+        tooltip.style.display === "block" ? "none" : "block";
+    });
+  }
+}

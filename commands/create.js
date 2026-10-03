@@ -1,81 +1,100 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed } = require('discord.js');
-const fs = require('fs/promises');
-const config = require('../config.json');
-const CatLoggr = require('cat-loggr');
-
-const log = new CatLoggr();
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  PermissionFlagsBits,
+  MessageFlags,
+} = require("discord.js");
+const fs = require("fs").promises;
+const path = require("path");
+const config = require("../config.json");
+const { ensureDir } = require("../utils/stock.js");
+const { parseColor } = require("../utils/colors.js");
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('create')
-		.setDescription('Create a new service.')
-		.addStringOption(option =>
-			option.setName('service')
-				.setDescription('The name of the service to create')
-				.setRequired(true)
-		)
-		.addStringOption(option =>
-			option.setName('type')
-				.setDescription('The type of service (free or premium)')
-				.setRequired(true)
-				.addChoices(
-					{ name: 'Free', value: 'free' },
-					{ name: 'Premium', value: 'premium' },
-				)),
+  data: new SlashCommandBuilder()
+    .setName("create")
+    .setDescription("Create a new service.")
+    .setDMPermission(false)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
+    .addStringOption((o) =>
+      o.setName("service").setDescription("Service name").setRequired(true)
+    )
+    .addStringOption((o) =>
+      o
+        .setName("type")
+        .setDescription("free or premium")
+        .setRequired(true)
+        .addChoices(
+          { name: "Free", value: "free" },
+          { name: "Premium", value: "premium" }
+        )
+    ),
 
-	async execute(interaction) {
-		const service = interaction.options.getString('service');
-		const type = interaction.options.getString('type');
+  async execute(interaction) {
+    const service = interaction.options
+      .getString("service")
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]/g, "");
+    const type = interaction.options.getString("type");
 
-		if (!interaction.member.permissions.has('MANAGE_CHANNELS')) {
-			const errorEmbed = new MessageEmbed()
-				.setColor(config.color.red)
-				.setTitle('You Don\'t Have Permissions!')
-				.setDescription('🛑 Only Admin Can Do It HEHE')
-				.setFooter(interaction.user.tag, interaction.user.displayAvatarURL({ dynamic: true, size: 64 }))
-				.setTimestamp();
-			return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
-		}
+    if (!service) {
+      return interaction.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(parseColor(config.color.red))
+            .setTitle("Invalid service name")
+            .setDescription("Only letters, numbers, dashes, underscores.")
+            .setTimestamp(),
+        ],
+        flags: MessageFlags.Ephemeral,
+      });
+    }
 
-		if (!service) {
-			const missingParamsEmbed = new MessageEmbed()
-				.setColor(config.color.red)
-				.setTitle('Missing parameters!')
-				.setDescription('You need to specify a service name!')
-				.setFooter(interaction.user.tag, interaction.user.displayAvatarURL({ dynamic: true, size: 64 }))
-				.setTimestamp();
-			return interaction.reply({ embeds: [missingParamsEmbed], ephemeral: true });
-		}
+    const dir = path.join(__dirname, "..", type);
+    const filePath = path.join(dir, `${service}.txt`);
 
-		let filePath;
-		if (type === 'free') {
-			filePath = `${__dirname}/../free/${service}.txt`;
-		} else if (type === 'premium') {
-			filePath = `${__dirname}/../premium/${service}.txt`;
-		} else {
-			const invalidTypeEmbed = new MessageEmbed()
-				.setColor(config.color.red)
-				.setTitle('Invalid service type!')
-				.setDescription('Service type must be "free" or "premium".')
-				.setFooter(interaction.user.tag, interaction.user.displayAvatarURL({ dynamic: true, size: 64 }))
-				.setTimestamp();
-			return interaction.reply({ embeds: [invalidTypeEmbed], ephemeral: true });
-		}
+    await ensureDir(dir);
 
-		try {
-			await fs.writeFile(filePath, '');
-			const successEmbed = new MessageEmbed()
-				.setColor(config.color.green)
-				.setTitle('Service created!')
-				.setDescription(`New service **${type}** \`${service}\` service created!`)
-				.setFooter(interaction.user.tag, interaction.user.displayAvatarURL())
-				.setTimestamp();
+    try {
+      await fs.writeFile(filePath, "", { flag: "wx" });
+    } catch (err) {
+      if (err.code === "EEXIST") {
+        return interaction.reply({
+          embeds: [
+            new EmbedBuilder()
+              .setColor(parseColor(config.color.yellow))
+              .setTitle("Already exists")
+              .setDescription(
+                `Service **${type}** \`${service}\` already exists.`
+              )
+              .setTimestamp(),
+          ],
+          flags: MessageFlags.Ephemeral,
+        });
+      }
+      console.error(err);
+      return interaction.reply({
+        content: "Failed to create service.",
+        flags: MessageFlags.Ephemeral,
+      });
+    }
 
-			interaction.reply({ embeds: [successEmbed], ephemeral: true });
-		} catch (error) {
-			log.error(error);
-			return interaction.reply('An error occurred while creating the service.');
-		}
-	},
+    await interaction.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(parseColor(config.color.green))
+          .setTitle("Service created!")
+          .setDescription(`New **${type}** service \`${service}\` created.`)
+          .setFooter({
+            text: interaction.user.tag,
+            iconURL: interaction.user.displayAvatarURL({
+              dynamic: true,
+              size: 64,
+            }),
+          })
+          .setTimestamp(),
+      ],
+      flags: MessageFlags.Ephemeral,
+    });
+  },
 };
