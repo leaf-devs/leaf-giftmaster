@@ -2,9 +2,6 @@ const path = require("path");
 const rateLimit = require("express-rate-limit");
 const { DASHBOARD_DIR } = require("../paths");
 
-const ADMIN_USER = process.env.USERNAME;
-const ADMIN_PASS = process.env.PASSWORD;
-
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
@@ -15,6 +12,9 @@ const loginLimiter = rateLimit({
 
 function registerAuthRoutes(app) {
   app.post("/login", loginLimiter, (req, res) => {
+    const ADMIN_USER = process.env.USERNAME;
+    const ADMIN_PASS = process.env.PASSWORD;
+
     const username = String(req.body.username || "");
     const password = String(req.body.password || "");
 

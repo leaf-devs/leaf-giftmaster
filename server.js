@@ -18,7 +18,9 @@ if (!process.env.SESSION_SECRET) {
 }
 
 if (!process.env.USERNAME || !process.env.PASSWORD) {
-  console.error("Admin credentials missing (env username/password). Refusing to start.");
+  console.error(
+    "USERNAME / PASSWORD missing in environment. Refusing to start."
+  );
   process.exit(1);
 }
 
@@ -29,23 +31,25 @@ app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(express.static(DASHBOARD_DIR));
 
-app.use(session({
-  store: new FileStore({
-    path: path.join(ROOT, ".sessions"),
-    retries: 0,
-    logFn: () => {},
-  }),
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: false,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  },
-  name: "giftmaster.sid",
-}));
+app.use(
+  session({
+    store: new FileStore({
+      path: path.join(ROOT, ".sessions"),
+      retries: 0,
+      logFn: () => {},
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: false,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    },
+    name: "giftmaster.sid",
+  })
+);
 
 registerAuthRoutes(app);
 registerDashboardRoutes(app);

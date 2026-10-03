@@ -1,5 +1,3 @@
-const { escapeHtml } = require('../utils');
-
 function renderDashboard({ freeLines, premiumLines, stockFileLinks, pstockFileLinks }) {
   return `<!doctype html>
 <html>
