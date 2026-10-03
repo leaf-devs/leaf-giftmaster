@@ -37,6 +37,10 @@ function registerAuthRoutes(app) {
   });
 
   app.get("/", (req, res) => {
+    // Already logged in? Skip the login page.
+    if (req.session && req.session.user) {
+      return res.redirect("/edit");
+    }
     res.sendFile(path.join(DASHBOARD_DIR, "login.html"));
   });
 }
