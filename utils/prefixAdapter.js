@@ -1,32 +1,22 @@
 const { MessageFlags } = require("discord.js");
 
-/**
- * Build a slash-interaction-shaped object from a prefix message.
- * Lets existing command.execute() handlers run unchanged.
- */
 function buildInteraction(message, command, args) {
-  const optionDefs = (command.data.options || []).map((o) => o.toJSON
-    ? o.toJSON()
-    : o);
+  const optionDefs = (command.data.options || []).map((o) =>
+    o.toJSON ? o.toJSON() : o
+  );
 
-  // Map positional args to option names in declaration order.
   const resolved = {};
   let i = 0;
   for (const opt of optionDefs) {
-    if (opt.type === 1 || opt.type === 2) continue; // subcommand / group, not used here
+    if (opt.type === 1 || opt.type === 2) continue;
     const raw = args[i];
     i++;
 
     if (raw === undefined) {
-      if (opt.required) {
-        resolved[opt.name] = null;
-        continue;
-      }
       resolved[opt.name] = null;
       continue;
     }
 
-    // Validate against choices if present.
     if (Array.isArray(opt.choices) && opt.choices.length > 0) {
       const match = opt.choices.find(
         (c) => c.value.toLowerCase() === String(raw).toLowerCase()
@@ -41,14 +31,21 @@ function buildInteraction(message, command, args) {
   const state = { replied: false, deferred: false };
 
   const send = async (payload) => {
-    // Ephemeral in slash = DM in prefix.
+    const incomingFlags = payload?.flags ?? 0;
     const isEphemeral =
-      payload?.flags === MessageFlags.Ephemeral ||
-      payload?.ephemeral === true;
+      payload?.ephemeral === true ||
+      (incomingFlags & MessageFlags.Ephemeral) !== 0;
+
+    // Strip only the ephemeral bit. Preserve IsComponentsV2 and others.
+    const outFlags = incomingFlags & ~MessageFlags.Ephemeral;
 
     const clean = { ...payload };
-    delete clean.flags;
     delete clean.ephemeral;
+    if (outFlags === 0) {
+      delete clean.flags;
+    } else {
+      clean.flags = outFlags;
+    }
 
     if (isEphemeral) {
       return message.author.send(clean);
@@ -130,10 +127,6 @@ function buildInteraction(message, command, args) {
   return api;
 }
 
-/**
- * Parse a raw message into { commandName, args } if it uses the prefix.
- * Returns null when the message isn't a prefix command.
- */
 function parsePrefixMessage(message, prefix) {
   const content = message.content || "";
   if (!content.startsWith(prefix)) return null;

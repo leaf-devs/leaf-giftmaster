@@ -1,8 +1,6 @@
-const {
-  SlashCommandBuilder,
-  EmbedBuilder,
-} = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 const config = require("../config.json");
+const { container, reply } = require("../utils/v2.js");
 const { parseColor } = require("../utils/colors.js");
 
 module.exports = {
@@ -13,39 +11,46 @@ module.exports = {
 
   async execute(interaction) {
     const p = config.prefix || "!";
+    const client = interaction.client;
 
-    const embed = new EmbedBuilder()
-      .setColor(parseColor(config.color.default))
-      .setTitle("Help Panel")
-      .setDescription(
-        `👋 Hello and welcome to **${interaction.guild.name}**! 🌟 We are here to provide you with the best services. 🚀`
-      )
-      .setImage(config.banner)
-      .setThumbnail(
-        interaction.client.user.displayAvatarURL({ dynamic: true, size: 64 })
-      )
-      .addFields({
-        name: "Commands",
-        value: [
-          `**Slash**                     **Prefix**`,
-          `\`/help\` — help panel           \`${p}help\``,
-          `\`/stock\` — live stock            \`${p}stock\``,
-          `\`/free <service>\` — free gen     \`${p}free <service>\``,
-          `\`/premium <service>\` — prem gen  \`${p}premium <service>\``,
-          `\`/create <service> <type>\`      \`${p}create <service> <type>\``,
-          `\`/add <type> <service> <acct>\`  \`${p}add <type> <service> <acct>\``,
-        ].join("\n"),
-      })
-      .addFields({
-        name: "Useful Links",
-        value: `[**Website**](${config.website}) [**Discord**](https://dsc.gg/sciencegear)`,
-      })
-      .setFooter({
-        text: interaction.user.tag,
-        iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 64 }),
-      })
-      .setTimestamp();
+    const header = container({
+      accentColor: parseColor(config.color.default),
+      blocks: [
+        { type: "text", content: `# ${client.user.username}\n👋 Welcome to **${interaction.guild.name}**` },
+        { type: "separator" },
+        {
+          type: "text",
+          content: [
+            "## Slash",
+            "`/help` — this panel",
+            "`/stock` — live stock",
+            "`/free <service>` — free gen",
+            "`/premium <service>` — premium gen",
+            "`/create <service> <type>` — new service",
+            "`/add <type> <service> <account>` — add stock",
+          ].join("\n"),
+        },
+        { type: "separator" },
+        {
+          type: "text",
+          content: [
+            "## Prefix",
+            `\`${p}help\``,
+            `\`${p}stock\``,
+            `\`${p}free <service>\``,
+            `\`${p}premium <service>\``,
+            `\`${p}create <service> <type>\``,
+            `\`${p}add <type> <service> <account>\``,
+          ].join("\n"),
+        },
+        { type: "separator" },
+        {
+          type: "text",
+          content: `[**Website**](${config.website}) · [**Discord**](https://dsc.gg/sciencegear)`,
+        },
+      ],
+    });
 
-    await interaction.reply({ embeds: [embed] });
+    await interaction.reply(reply(header));
   },
 };
